@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Project extends Model
+{
+    use HasUuids;
+
+    protected $fillable = ['title','description'];
+
+
+
+    // Tell Laravel to generate UUID for this column
+    public function uniqueIds()
+    {
+        return ['uuid'];
+    }
+
+    // 
+    // public const COL_UUID = 'uuid';
+    
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+                    ->withPivot('role')
+                    ->withTimestamps();
+    }
+}
