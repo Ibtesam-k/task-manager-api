@@ -28,4 +28,9 @@ class Project extends Model
                     ->withPivot('role')
                     ->withTimestamps();
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 }

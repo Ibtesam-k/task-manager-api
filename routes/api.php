@@ -13,6 +13,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects', [ProjectController::class, 'store']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/projects',[ProjectController::class,'index']);
+    Route::post('/projects/{project}/members',[ProjectController::class,'addMember']);
 
 });
 
