@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Enums\ProjectRole;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class ProjectService
@@ -19,5 +20,12 @@ class ProjectService
 
             return $project;
         });
+    }
+
+
+
+    public function getUserProjects(User $user)
+    {
+        return $user->projects()->get();
     }
 }

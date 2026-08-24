@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects', [ProjectController::class, 'store']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/projects',[ProjectController::class,'index']);
 
 });
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Services\ProjectService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -20,5 +21,12 @@ class ProjectController extends Controller
         );
 
         return response()->json($project, 201);
+    }
+    
+    public function index(Request $request)
+    {
+        return $this->projectService->getUserProjects(
+            $request->user()
+        );
     }
 }
