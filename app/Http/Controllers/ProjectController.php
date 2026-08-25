@@ -53,4 +53,13 @@ class ProjectController extends Controller
 
             return response()->json(['message'=>'Member removed successfully'], 200);
         }
+
+        public function listMembers(Request $request, Project $project)
+        {
+            $this->authorize('listMembers', $project);
+            $members = $this->projectService->listMembers($project);
+            return response()->json(['message'=>'Members retrieved successfully',"data"=>$members]);
+
+        }
+
 }

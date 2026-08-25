@@ -67,4 +67,10 @@ class ProjectService
         $project->users()->detach($userId);
     }
 
+    
+    public function listMembers(Project $project)
+    {
+        return $project->users()->select('users.id','users.name')->get();
+    }
+
 }

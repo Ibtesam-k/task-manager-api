@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects',[ProjectController::class,'index']);
     Route::post('/projects/{project}/members',[ProjectController::class,'addMember']);
     Route::delete('/projects/{project}/members',[ProjectController::class,'removeMember']);
+    Route::get('/projects/{project}/members',[ProjectController::class,'listMembers']);
 });
 
 Route::post('/users', [AuthController::class, 'register']);

@@ -85,6 +85,10 @@ class ProjectPolicy
            return $this->isOwner($user,$project);
         }
 
+    public function listMembers(User $user, Project $project): bool 
+    {
+            return $this->isMember($user,$project);
+    }
     private function isOwner(User $user, Project $project): bool
     {
         return $project->users()
@@ -92,4 +96,12 @@ class ProjectPolicy
             ->wherePivot('role', ProjectRole::OWNER->value)
             ->exists();
     }
+
+    private function isMember(User $user, Project $project): bool
+    {
+        return $project->users()
+            ->where('users.id', $user->id)
+            ->exists();
+    }
+
 }
