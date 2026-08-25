@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\AddMemberRequest;
+use App\Http\Requests\ProjectMemberRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class ProjectController extends Controller
         );
     }
 
-    public function addMember(AddMemberRequest $request,Project $project) {
+    public function addMember(ProjectMemberRequest $request,Project $project) {
             $this->authorize('addMember', $project);
 
             $this->projectService->addMember(
@@ -43,5 +43,14 @@ class ProjectController extends Controller
             return response()->json([
                 'message' => 'Member added successfully',
             ], 201);
+        }
+    
+        public function removeMember(ProjectMemberRequest $request, Project $project)
+        {
+            $this->authorize('removeMember', $project);
+
+            $this->projectService->removeMember($project,$request->validated('userId'));
+
+            return response()->json(['message'=>'Member removed successfully'], 200);
         }
 }

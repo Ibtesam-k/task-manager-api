@@ -70,14 +70,26 @@ class ProjectPolicy
     }
 
         /**
-     * Determine whether the user can add memeber to the project .
+     * Determine whether the user can add member to the project .
      */
     public function addMember(User $user, Project $project): bool
         {
-           
-            return $project->users()
-                ->where('users.id', $user->id)
-                ->wherePivot('role', ProjectRole::OWNER->value)
-                ->exists();
+           return $this->isOwner($user,$project);
         }
+
+     /**
+     * Determine whether the user can remove member to the project .
+     */
+    public function removeMember(User $user, Project $project): bool
+        {
+           return $this->isOwner($user,$project);
+        }
+
+    private function isOwner(User $user, Project $project): bool
+    {
+        return $project->users()
+            ->where('users.id', $user->id)
+            ->wherePivot('role', ProjectRole::OWNER->value)
+            ->exists();
+    }
 }

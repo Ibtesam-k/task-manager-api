@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProjectService
 {
@@ -36,12 +37,34 @@ class ProjectService
             throw new ConflictHttpException(
                 'User is already a member of this project.'
             );
-}
+        }
         $project->users()->attach($userId, 
         [
             'role'=>ProjectRole::MEMBER->value
         ]);
 
+    }
+
+    public function removeMember(Project $project, int $userId): void
+    {
+        $member = $project->users()
+            ->withPivot('role')
+            ->find($userId);
+
+
+        if (!$member) {
+            throw new NotFoundHttpException(
+                'User is not a member of this project.'
+            );
+        }
+
+        if ($member->pivot->role === ProjectRole::OWNER->value) {
+            throw new ConflictHttpException(
+                'The project owner cannot be removed.'
+            );
+        }
+
+        $project->users()->detach($userId);
     }
 
 }
