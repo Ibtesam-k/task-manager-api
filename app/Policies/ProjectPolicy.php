@@ -26,7 +26,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return false;
+       return $this->isMember($user,$project);
     }
 
     /**
