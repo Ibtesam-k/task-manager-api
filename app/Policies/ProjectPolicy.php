@@ -42,7 +42,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return false;
+        return $this->isOwner($user,$project);
     }
 
     /**

@@ -73,4 +73,10 @@ class ProjectService
         return $project->users()->select('users.id','users.name')->get();
     }
 
+    public function update(Project $project , array $data )
+    {
+        $project->update($data);
+        return $project->refresh();
+    }
+
 }

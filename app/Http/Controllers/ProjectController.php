@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\ProjectMemberRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
@@ -66,6 +67,21 @@ class ProjectController extends Controller
         {
             $this->authorize('view', $project);
             return response()->json(['message'=>'Project retrieved successfully',"data"=>$project]);
+        }
+
+        public function update(UpdateProjectRequest $request, Project $project)
+        {
+            $this->authorize('update',$project);
+            $project = $this->projectService->update(
+                        $project,
+                        $request->validated()
+                    );
+
+            return response()->json([
+                'message' => 'Project updated successfully',
+                'data' => $project,
+            ]);
+
         }
 
 }
