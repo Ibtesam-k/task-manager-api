@@ -79,4 +79,10 @@ class ProjectService
         return $project->refresh();
     }
 
+    public function delete(Project $project)
+    {
+        $project->delete();
+        //ToDO: how this affects tasks
+    }
+
 }

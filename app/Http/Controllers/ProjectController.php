@@ -84,4 +84,14 @@ class ProjectController extends Controller
 
         }
 
+        public function destroy(Project $project)
+        {
+            $this->authorize('delete',$project);
+            $this->projectService->delete($project);
+
+            return response()->json([
+                'message' => 'Project deleted successfully'
+            ]);
+        }
+
 }

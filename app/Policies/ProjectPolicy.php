@@ -50,7 +50,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return false;
+         return $this->isOwner($user,$project);
     }
 
     /**
