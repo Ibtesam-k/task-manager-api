@@ -104,4 +104,9 @@ class ProjectPolicy
             ->exists();
     }
 
+    public function createTask(User $user, Project $project) : bool
+    {
+        return $this->isMember($user,$project);
+    }
+
 }
