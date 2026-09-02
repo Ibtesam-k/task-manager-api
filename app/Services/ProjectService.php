@@ -85,4 +85,20 @@ class ProjectService
         //ToDO: how this affects tasks
     }
 
+    public function isOwner(User $user, Project $project): bool
+    {
+        return $this->getUserRole($user, $project) === ProjectRole::OWNER;
+    }
+
+    public function isMember(User $user, Project $project): bool
+    {
+        return $this->getUserRole($user, $project) !== null;
+    }
+
+    public function getUserRole(User $user, Project $project)
+    {
+        $role = $project->users()->where('users.id',$user->id)->value('project_user.role');
+        return $role ? ProjectRole::from($role) : null; 
+    }
+
 }

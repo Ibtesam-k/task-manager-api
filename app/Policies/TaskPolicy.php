@@ -3,18 +3,20 @@
 namespace App\Policies;
 
 use App\Enums\ProjectRole;
-use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\ProjectService;
 
 class TaskPolicy
 {
     /**
      * Create a new policy instance.
      */
-    public function __construct()
-    {
+    public function __construct(
+        protected ProjectService $projectService
 
+    )
+    {
     }
 
     
@@ -23,26 +25,16 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        if (!$this->isMember($user, $task->project)) {
-        return false;
+        $project = $task->project;
+
+        $role = $this->projectService->getUserRole($user, $project);
+
+        if ($role === null) {
+            return false;
         }
-        return $this->isOwner($user,$task->project) || ($task->created_by === $user->id);
-    }
 
-
-    private function isOwner(User $user, Project $project): bool
-    {
-        return $project->users()
-            ->where('users.id', $user->id)
-            ->wherePivot('role', ProjectRole::OWNER->value)
-            ->exists();
-    }
-
-    private function isMember(User $user, Project $project): bool
-    {
-        return $project->users()
-            ->where('users.id', $user->id)
-            ->exists();
+        return $role === ProjectRole::OWNER
+            || $task->created_by === $user->id;
     }
 
 }
