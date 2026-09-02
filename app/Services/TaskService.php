@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 class TaskService
 {
@@ -14,5 +13,11 @@ class TaskService
         $data['created_by'] = $user->id;
         $data['project_id'] = $project->id;
         return Task::create($data);
+    }
+
+    public function update(Task $task, array $data)
+    {
+        $task->update($data);
+        return $task->refresh();
     }
 }

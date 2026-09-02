@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/projects/{project}',[ProjectController::class,'update']);
     Route::delete('/projects/{project}',[ProjectController::class,'destroy']);
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store']);
-
+    Route::patch('/tasks/{task}', [TaskController::class, 'update']);
 });
 
 Route::post('/users', [AuthController::class, 'register']);
