@@ -37,4 +37,13 @@ class TaskPolicy
             || $task->created_by === $user->id;
     }
 
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Task $task): bool
+    {
+         return $this->projectService->isOwner($user,$task->project);
+    }
+
+
 }

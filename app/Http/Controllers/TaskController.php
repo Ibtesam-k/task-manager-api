@@ -42,4 +42,13 @@ class TaskController extends Controller
         ]);
 
     }
+
+    public function destroy(Task $task)
+    {
+        $this->authorize('delete',$task);
+        $this->taskService->delete($task);
+        return response()->json([
+                'message' => 'Task deleted successfully'
+        ]);
+    }
 }

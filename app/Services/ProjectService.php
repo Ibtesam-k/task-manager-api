@@ -79,10 +79,12 @@ class ProjectService
         return $project->refresh();
     }
 
-    public function delete(Project $project)
+    public function delete(Project $project) : void
     {
-        $project->delete();
-        //ToDO: how this affects tasks
+        DB::transaction(function () use ($project){
+            $project->tasks()->delete();
+            $project->delete();
+        });
     }
 
     public function isOwner(User $user, Project $project): bool
