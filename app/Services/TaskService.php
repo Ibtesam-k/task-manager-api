@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class TaskService
 {
@@ -24,5 +25,10 @@ class TaskService
     public function delete(Task $task) : void
     {
          $task->delete();
+    }
+
+    public function list(Project $project) : Collection 
+    {
+        return $project->tasks()->get();
     }
 }

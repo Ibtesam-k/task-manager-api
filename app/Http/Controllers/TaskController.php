@@ -15,6 +15,17 @@ class TaskController extends Controller
         protected TaskService $taskService
     ) {}
 
+    public function index(Project $project)
+    {
+        $this->authorize('viewTasks', $project);
+        $data = $this->taskService->list($project);
+        
+        return response()->json([
+            'message' => 'Tasks retrieved successfully',
+            'data' => $data,
+        ]);
+
+    }
     public function store(StoreTaskRequest $request, Project $project)
     {
         $this->authorize('createTask', $project);

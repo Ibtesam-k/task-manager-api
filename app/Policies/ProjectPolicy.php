@@ -66,4 +66,9 @@ class ProjectPolicy
         return $this->projectService->isMember($user,$project);
     }
 
+    public function viewTasks(User $user, Project $project) : bool
+    {
+        return $this->projectService->isMember($user,$project);
+    }
+
 }

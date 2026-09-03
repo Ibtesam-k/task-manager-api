@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects/{project}/tasks', [TaskController::class, 'store']);
     Route::patch('/tasks/{task}', [TaskController::class, 'update']);
     Route::delete('/tasks/{task}',[TaskController::class,'destroy']);
+    Route::get('/projects/{project}/tasks',[TaskController::class,'index']);
+
 });
 
 Route::post('/users', [AuthController::class, 'register']);
