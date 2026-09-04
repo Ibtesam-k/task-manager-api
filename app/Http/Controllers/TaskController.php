@@ -62,4 +62,12 @@ class TaskController extends Controller
                 'message' => 'Task deleted successfully'
         ]);
     }
+
+    public function show(Task $task)
+    {
+        $this->authorize('view', $task);
+        return response()->json([
+            'message' => 'Task retrieved successfully',
+            'data' => $task,
+        ]);    }
 }

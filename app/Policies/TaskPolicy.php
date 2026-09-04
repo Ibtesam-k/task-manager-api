@@ -45,5 +45,13 @@ class TaskPolicy
          return $this->projectService->isOwner($user,$task->project);
     }
 
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Task $task): bool
+    {
+       return $this->projectService->isMember($user,$task->project);
+    }
+
 
 }
