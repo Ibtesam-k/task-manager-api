@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AssignTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Requests\UpdateTaskStatusRequest;
 use App\Models\Project;
 use App\Models\Task;
 use App\Services\TaskService;
@@ -86,5 +87,21 @@ class TaskController extends Controller
                 : 'Task assigned successfully',
             'data' => $task,
         ]);
+    }
+
+    public function changeStatus(UpdateTaskStatusRequest $request, Task $task)
+    {
+        $this->authorize('changeStatus', $task);
+        
+        $task = $this->taskService->update(
+            $task,
+            $request->validated()
+        );
+
+        return response()->json([
+            'message' => 'Task status updated successfully',
+            'data' => $task,
+        ]);
+
     }
 }

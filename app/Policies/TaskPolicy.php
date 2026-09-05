@@ -61,4 +61,17 @@ class TaskPolicy
         );
     }
 
+    public function changeStatus(User $user, Task $task): bool
+    {
+        $project = $task->project;
+        $role = $this->projectService->getUserRole($user, $project);
+
+        if ($role === null) {
+            return false;
+        }
+
+        return $role === ProjectRole::OWNER
+            || $task->created_by === $user->id
+            || $task->assignee_id === $user->id;
+    }
 }
