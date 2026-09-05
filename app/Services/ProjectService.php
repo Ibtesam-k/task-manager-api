@@ -97,10 +97,17 @@ class ProjectService
         return $this->getUserRole($user, $project) !== null;
     }
 
-    public function getUserRole(User $user, Project $project)
+    public function getUserRole(User $user, Project $project) : ?ProjectRole
     {
         $role = $project->users()->where('users.id',$user->id)->value('project_user.role');
         return $role ? ProjectRole::from($role) : null; 
+    }
+
+    public function isUserMember(int $userId, Project $project): bool
+    {
+        return $project->users()
+            ->where('users.id', $userId)
+            ->exists();
     }
 
 }

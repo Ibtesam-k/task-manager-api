@@ -53,5 +53,12 @@ class TaskPolicy
        return $this->projectService->isMember($user,$task->project);
     }
 
+    public function assign(User $user, Task $task): bool
+    {
+        return $this->projectService->isOwner(
+            $user,
+            $task->project
+        );
+    }
 
 }

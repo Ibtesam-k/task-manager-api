@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AssignTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
@@ -70,4 +71,20 @@ class TaskController extends Controller
             'message' => 'Task retrieved successfully',
             'data' => $task,
         ]);    }
+
+    public function assign(AssignTaskRequest $request, Task $task)
+    {
+        $this->authorize('assign', $task);
+
+        $assigneeId = $request->validated('assignee_id');
+
+        $task = $this->taskService->assign($task, $assigneeId);
+
+        return response()->json([
+            'message' => $assigneeId === null
+                ? 'Task unassigned successfully'
+                : 'Task assigned successfully',
+            'data' => $task,
+        ]);
+    }
 }
