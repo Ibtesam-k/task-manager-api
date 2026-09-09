@@ -79,4 +79,9 @@ class TaskPolicy
     {
         return $this->projectService->isMember($user,$task->project);
     }
+
+    public function viewComments(User $user, Task $task) : bool
+    {
+        return $this->projectService->isMember($user,$task->project);
+    }
 }

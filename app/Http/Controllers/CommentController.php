@@ -22,4 +22,17 @@ class CommentController extends Controller
             'data' => $comment,
         ], 201);
     }
+
+    public function index(Task $task)
+    {
+        $this->authorize('viewComments',$task);
+
+        $data = $this->commentService->list($task);
+
+        return response()->json([
+            'message' => 'Comments retrieved successfully',
+            'data' => $data,
+        ]);
+
+    }
 }

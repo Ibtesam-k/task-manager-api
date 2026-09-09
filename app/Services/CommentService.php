@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class CommentService
 {
@@ -14,5 +15,10 @@ class CommentService
         $data['created_by'] = $user->id;
         $data['task_id'] = $task->id;
         return Comment::create($data);
+    }
+
+    public function list(Task $task) : Collection 
+    {
+        return $task->comments()->get();
     }
 }
