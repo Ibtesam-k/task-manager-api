@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasks/{task}',[TaskController::class,'show']);
     Route::patch('/tasks/{task}/assign',[TaskController::class,'assign']);
     Route::patch('/tasks/{task}/status',[TaskController::class,'changeStatus']);
+    Route::post('/tasks/{task}/comments',[CommentController::class,'store']);
 
 });
 

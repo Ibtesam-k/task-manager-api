@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\TaskStatus;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
@@ -16,6 +18,15 @@ class Task extends Model
     public function uniqueIds() : array
     {
         return ['uuid'];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => TaskStatus::class,
+            'start_date' => 'date',
+            'due_date' => 'date',
+        ];
     }
 
     public function getRouteKeyName(): string
@@ -38,13 +49,9 @@ class Task extends Model
         return $this->belongsTo(User::class, 'assignee_id');
     }
 
-    protected function casts(): array
+    public function comments(): HasMany
     {
-        return [
-            'status' => TaskStatus::class,
-            'start_date' => 'date',
-            'due_date' => 'date',
-        ];
+        return $this->hasMany(Comment::class);
     }
 
 

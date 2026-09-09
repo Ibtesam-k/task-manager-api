@@ -74,4 +74,9 @@ class TaskPolicy
             || $task->created_by === $user->id
             || $task->assignee_id === $user->id;
     }
+
+    public function createComment(User $user, Task $task) : bool
+    {
+        return $this->projectService->isMember($user,$task->project);
+    }
 }
