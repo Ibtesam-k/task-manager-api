@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class TaskService
@@ -29,7 +30,10 @@ class TaskService
 
     public function delete(Task $task) : void
     {
+        DB::transaction(function () use ($task){
+         $task->comments()->delete();
          $task->delete();
+        });
     }
 
     public function list(Project $project) : Collection 

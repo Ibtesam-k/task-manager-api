@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tasks/{task}/comments',[CommentController::class,'store']);
     Route::get('/tasks/{task}/comments',[CommentController::class,'index']);
     Route::patch('/comments/{comment}',[CommentController::class,'update']);
+    Route::delete('/comments/{comment}',[CommentController::class,'destroy']);
 
 });
 

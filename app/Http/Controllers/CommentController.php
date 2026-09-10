@@ -49,4 +49,14 @@ class CommentController extends Controller
             'data' => $comment,
         ]);
     }
+
+    public function destroy(Comment $comment)
+    {
+        $this->authorize('delete',$comment);
+
+        $this->commentService->delete($comment);
+        return response()->json([
+                'message' => 'Comment deleted successfully'
+        ]);
+    }
 }

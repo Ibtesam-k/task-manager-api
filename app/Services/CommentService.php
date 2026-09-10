@@ -27,4 +27,10 @@ class CommentService
         $comment->update($data);
         return $comment->refresh();
     }
+
+    public function delete(Comment $comment) : void
+    {
+         $comment->delete();
+    }
+
 }
