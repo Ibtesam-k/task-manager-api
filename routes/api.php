@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/tasks/{task}/status',[TaskController::class,'changeStatus']);
     Route::post('/tasks/{task}/comments',[CommentController::class,'store']);
     Route::get('/tasks/{task}/comments',[CommentController::class,'index']);
+    Route::patch('/comments/{comment}',[CommentController::class,'update']);
 
 });
 

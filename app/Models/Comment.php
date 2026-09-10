@@ -17,6 +17,11 @@ class Comment extends Model
         return ['uuid'];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     public function creator() : BelongsTo
     {
         return $this->belongsTo(User::class,'created_by');

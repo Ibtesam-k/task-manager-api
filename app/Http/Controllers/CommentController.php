@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateCommentRequest;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
+use App\Models\Comment;
 use App\Models\Task;
 use App\Services\CommentService;
 
@@ -12,7 +14,7 @@ class CommentController extends Controller
         protected CommentService $commentService
     ) {}
 
-    public function store(CreateCommentRequest $request, Task $task)
+    public function store(StoreCommentRequest $request, Task $task)
     {
         $this->authorize('createComment',$task);
         $comment = $this->commentService->create($task,$request->user(),$request->validated());
@@ -34,5 +36,17 @@ class CommentController extends Controller
             'data' => $data,
         ]);
 
+    }
+
+    public function update(UpdateCommentRequest $request,Comment $comment)
+    {
+        $this->authorize('update',$comment);
+
+        $comment = $this->commentService->update($comment,$request->validated());
+
+        return response()->json([
+            'message' => 'Comment updated successfully',
+            'data' => $comment,
+        ]);
     }
 }

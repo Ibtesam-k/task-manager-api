@@ -21,4 +21,10 @@ class CommentService
     {
         return $task->comments()->get();
     }
+
+    public function update(Comment $comment, array $data)
+    {
+        $comment->update($data);
+        return $comment->refresh();
+    }
 }
