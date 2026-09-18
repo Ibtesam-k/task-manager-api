@@ -31,4 +31,11 @@ class ActivityService
             ]);
     }
 
+    
+
+    public function list(Project $project)
+    {
+        return $project->activities()->get();
+    }
+
 }

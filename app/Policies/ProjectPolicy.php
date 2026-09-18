@@ -71,4 +71,9 @@ class ProjectPolicy
         return $this->projectService->isMember($user,$project);
     }
 
+    public function viewActivities(User $user, Project $project) : bool
+    {
+        return $this->projectService->isMember($user,$project);
+    }
+
 }

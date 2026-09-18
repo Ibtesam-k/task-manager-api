@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectController;
@@ -32,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tasks/{task}/comments',[CommentController::class,'index']);
     Route::patch('/comments/{comment}',[CommentController::class,'update']);
     Route::delete('/comments/{comment}',[CommentController::class,'destroy']);
+    Route::get('/projects/{project}/activities',[ActivityController::class,'index']);
 
 });
 
