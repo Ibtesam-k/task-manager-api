@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Activity extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'project_id',
         'actor_id',
@@ -16,6 +18,7 @@ class Activity extends Model
         'trackable_type',
         'type',
         'metadata',
+        'created_at'
     ];
 
     public function project(): BelongsTo

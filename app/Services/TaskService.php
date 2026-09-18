@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\TaskCreated;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -19,7 +20,9 @@ class TaskService
     {
         $data['created_by'] = $user->id;
         $data['project_id'] = $project->id;
-        return Task::create($data);
+        $task =  Task::create($data);
+        TaskCreated::dispatch($task);
+        return $task;
     }
 
     public function update(Task $task, array $data) : Task
