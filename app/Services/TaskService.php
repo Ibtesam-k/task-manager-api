@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\TaskCreated;
+use App\Events\TaskStatusChanged;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -25,9 +26,26 @@ class TaskService
         return $task;
     }
 
-    public function update(Task $task, array $data) : Task
+    public function update(Task $task, array $data, User $user): Task
     {
+        $oldStatus = $task->status;
+
         $task->update($data);
+
+        if (
+            array_key_exists('status', $data)
+            && $oldStatus !== $task->status
+        ) {
+            TaskStatusChanged::dispatch(
+                $task,
+                $user,
+                [
+                    'old_status' => $oldStatus->value,
+                    'new_status' => $task->status->value,
+                ]
+            );
+        }
+
         return $task->refresh();
     }
 

@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class TaskStatusChanged
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public Task $task, public User $user, public array $changes)
+    {
+        //
+    }
+
+
+}

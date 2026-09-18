@@ -47,7 +47,7 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         $this->authorize('update', $task);
-        $task = $this->taskService->update($task,$request->validated());
+        $task = $this->taskService->update($task,$request->validated(),$request->user());
         
         return response()->json([
             'message' => 'Task updated successfully',
@@ -95,7 +95,8 @@ class TaskController extends Controller
         
         $task = $this->taskService->update(
             $task,
-            $request->validated()
+            $request->validated(),
+            $request->user()
         );
 
         return response()->json([
