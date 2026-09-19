@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\TaskAssignmentChanged;
 use App\Events\TaskCreated;
 use App\Events\TaskStatusChanged;
 use App\Models\Project;
@@ -62,7 +63,7 @@ class TaskService
         return $project->tasks()->get();
     }
 
-    public function assign(Task $task, ?int $assigneeId): Task
+    public function assign(Task $task, User $user, ?int $assigneeId): Task
     {
         if (
             $assigneeId !== null &&
@@ -76,9 +77,20 @@ class TaskService
             );
         }
 
+        $oldAssigneeId = $task->assignee_id;
+
         $task->update([
             'assignee_id' => $assigneeId,
         ]);
+
+        if ($oldAssigneeId !== $assigneeId) {
+            TaskAssignmentChanged::dispatch(
+                $task,
+                $user,
+                $oldAssigneeId,
+                $assigneeId
+            );
+        }
 
         return $task->refresh();
     }

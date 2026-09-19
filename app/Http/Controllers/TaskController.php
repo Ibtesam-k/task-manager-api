@@ -79,7 +79,7 @@ class TaskController extends Controller
 
         $assigneeId = $request->validated('assignee_id');
 
-        $task = $this->taskService->assign($task, $assigneeId);
+        $task = $this->taskService->assign($task,$request->user(), $assigneeId);
 
         return response()->json([
             'message' => $assigneeId === null
