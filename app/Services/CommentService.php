@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\CommentCreated;
 use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
@@ -14,7 +15,9 @@ class CommentService
     {
         $data['created_by'] = $user->id;
         $data['task_id'] = $task->id;
-        return Comment::create($data);
+        $comment =  Comment::create($data);
+        CommentCreated::dispatch($comment);
+        return $comment;
     }
 
     public function list(Task $task) : Collection 
