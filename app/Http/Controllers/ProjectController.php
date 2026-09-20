@@ -38,7 +38,8 @@ class ProjectController extends Controller
 
             $this->projectService->addMember(
                 $project,
-                $request->validated('userId')
+                $request->validated('userId'),
+                $request->user()
             );
 
             return response()->json([
@@ -50,7 +51,7 @@ class ProjectController extends Controller
         {
             $this->authorize('removeMember', $project);
 
-            $this->projectService->removeMember($project,$request->validated('userId'));
+            $this->projectService->removeMember($project,$request->validated('userId'),$request->user());
 
             return response()->json(['message'=>'Member removed successfully'], 200);
         }

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\ProjectRole;
+use App\Events\MemberAdded;
+use App\Events\MemberRemoved;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +33,7 @@ class ProjectService
         return $user->projects()->get();
     }
 
-    public function addMember(Project $project, int $userId)
+    public function addMember(Project $project, int $userId, User $actor) :void
     {
         if ($project->users()->where('users.id', $userId)->exists()) {
             throw new ConflictHttpException(
@@ -43,9 +45,11 @@ class ProjectService
             'role'=>ProjectRole::MEMBER->value
         ]);
 
+        MemberAdded::dispatch($project, $actor, $userId);
+
     }
 
-    public function removeMember(Project $project, int $userId): void
+    public function removeMember(Project $project, int $userId,  User $actor): void
     {
         $member = $project->users()
             ->withPivot('role')
@@ -65,6 +69,9 @@ class ProjectService
         }
 
         $project->users()->detach($userId);
+        
+        MemberRemoved::dispatch($project, $actor, $userId);
+
     }
 
     
