@@ -7,6 +7,7 @@ use App\Events\MemberAdded;
 use App\Events\MemberRemoved;
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -116,5 +117,13 @@ class ProjectService
             ->where('users.id', $userId)
             ->exists();
     }
+
+    public function getProjectOwners(Project $project) : Collection
+    {
+        return $project->users()
+            ->withPivot('role')
+            ->where('project_user.role', ProjectRole::OWNER->value)
+            ->get();   
+     }
 
 }
