@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\TaskAssignmentChanged;
 use App\Events\TaskCreated;
 use App\Events\TaskStatusChanged;
+use App\Events\TaskUpdated;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -14,6 +15,12 @@ use InvalidArgumentException;
 
 class TaskService
 {
+    private const UPDATE_FIELDS = [
+        'title',
+        'description',
+        'start_date',
+        'due_date',
+    ];
     public function __construct(
         protected ProjectService $projectService
     ) {}
@@ -32,6 +39,9 @@ class TaskService
         $oldStatus = $task->status;
 
         $task->update($data);
+        if ($task->wasChanged(self::UPDATE_FIELDS)) {
+            TaskUpdated::dispatch($task, $user);
+        }
 
         if (
             array_key_exists('status', $data)
