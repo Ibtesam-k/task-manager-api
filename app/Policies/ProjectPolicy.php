@@ -76,4 +76,9 @@ class ProjectPolicy
         return $this->projectService->isMember($user,$project);
     }
 
+    public function updateUserRole(User $actor, Project $project) : bool
+    {
+        return $this->projectService->isOwner($actor,$project);
+    }
+
 }

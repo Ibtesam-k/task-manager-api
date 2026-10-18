@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProjectRequest;
+use App\Enums\ProjectRole;
 use App\Http\Requests\ProjectMemberRequest;
+use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Requests\UpdateUserRoleRequest;
 use App\Models\Project;
+use App\Models\User;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -92,6 +95,18 @@ class ProjectController extends Controller
 
             return response()->json([
                 'message' => 'Project deleted successfully'
+            ]);
+        }
+
+        public function updateUserRole(UpdateUserRoleRequest $request, Project $project, User $target)  {
+          
+            $this->authorize('updateUserRole',$project);
+            $role = ProjectRole::from($request->validated('role'));
+
+            $this->projectService->updateUserRole($project,$request->user(), $target, $role);
+            
+            return response()->json([
+                'message' => 'User role updated successfully'
             ]);
         }
 

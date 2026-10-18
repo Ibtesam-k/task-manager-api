@@ -126,4 +126,37 @@ class ProjectService
             ->get();   
      }
 
+     public function updateUserRole(Project $project,User $actor, User $target, ProjectRole $role) : void
+    {
+
+
+        if ($target->id === $actor->id) {
+            throw new ConflictHttpException(
+                'You cannot change your own project role.'
+            );
+        }
+
+        $currentRole = $this->getUserRole($target, $project);
+
+        if($currentRole === null)
+        {
+            throw new NotFoundHttpException(
+                'User is not a member of this project.'
+            ); 
+        }
+
+        if($currentRole === $role)
+        {
+            throw new ConflictHttpException(
+                'User already has this role.'
+            );
+        }
+
+
+        $project->users()->updateExistingPivot(
+            $target->id,
+            ['role' => $role->value]
+        );    
+        
+    }
 }

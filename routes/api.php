@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/comments/{comment}',[CommentController::class,'update']);
     Route::delete('/comments/{comment}',[CommentController::class,'destroy']);
     Route::get('/projects/{project}/activities',[ActivityController::class,'index']);
-
+    Route::patch('/projects/{project}/users/{target}/role',[ProjectController::class,'updateUserRole']);
 });
 
 Route::post('/users', [AuthController::class, 'register']);
