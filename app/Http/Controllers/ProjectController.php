@@ -110,4 +110,11 @@ class ProjectController extends Controller
             ]);
         }
 
+        public function leave(Request $request, Project $project)
+        {
+            $this->projectService->leave($request->user(),$project);
+
+            return response()->json(["message"=>"You successfully left the project"]);
+        }
+
 }

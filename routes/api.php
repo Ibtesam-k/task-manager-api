@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comments/{comment}',[CommentController::class,'destroy']);
     Route::get('/projects/{project}/activities',[ActivityController::class,'index']);
     Route::patch('/projects/{project}/users/{target}/role',[ProjectController::class,'updateUserRole']);
+    Route::delete('/projects/{project}/leave',[ProjectController::class,'leave']);
 });
 
 Route::post('/users', [AuthController::class, 'register']);

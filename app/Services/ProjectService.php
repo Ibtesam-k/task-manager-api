@@ -159,4 +159,30 @@ class ProjectService
         );    
         
     }
+
+    public function hasOtherOwners(Project $project, User $owner) : bool
+    {
+      return $project->users()
+      ->where('users.id','!=',$owner->id)
+      ->wherePivot('role',ProjectRole::OWNER->value)->exists();
+    }
+
+    public function leave(User $user, Project $project) : int
+    {
+        $role = $this->getUserRole($user, $project);
+        if($role === null)
+        {
+                throw new NotFoundHttpException(
+                'You are not a member of this project.'
+            ); 
+        }
+        if($role == ProjectRole::OWNER && !$this->hasOtherOwners($project,$user))
+        {
+            throw new ConflictHttpException(
+                'You are the only owner of this project. Promote another member to owner before leaving.'
+            );    
+        }
+
+        return $project->users()->detach($user->id);
+    }
 }
