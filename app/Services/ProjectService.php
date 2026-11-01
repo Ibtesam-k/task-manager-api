@@ -169,20 +169,27 @@ class ProjectService
 
     public function leave(User $user, Project $project) : int
     {
-        $role = $this->getUserRole($user, $project);
-        if($role === null)
-        {
-                throw new NotFoundHttpException(
-                'You are not a member of this project.'
-            ); 
-        }
-        if($role == ProjectRole::OWNER && !$this->hasOtherOwners($project,$user))
-        {
-            throw new ConflictHttpException(
-                'You are the only owner of this project. Promote another member to owner before leaving.'
-            );    
-        }
+      return  DB::transaction(function () use ($project, $user) {
+        $project = Project::whereKey($project->id)
+            ->lockForUpdate()
+            ->firstOrFail();
 
-        return $project->users()->detach($user->id);
+            $role = $this->getUserRole($user, $project);
+            if($role === null)
+            {
+                    throw new NotFoundHttpException(
+                    'You are not a member of this project.'
+                ); 
+            }
+            if($role === ProjectRole::OWNER && !$this->hasOtherOwners($project,$user))
+            {
+                throw new ConflictHttpException(
+                    'You are the only owner of this project. Promote another member to owner before leaving.'
+                );    
+            }
+
+            return $project->users()->detach($user->id);
+        });
+            
     }
 }
