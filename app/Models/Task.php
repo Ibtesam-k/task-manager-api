@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\TaskStatus;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids, SoftDeletes, HasFactory;
     protected $fillable = ['project_id','created_by','assignee_id','title','description','start_date','due_date','status'];
 
     public function uniqueIds() : array
