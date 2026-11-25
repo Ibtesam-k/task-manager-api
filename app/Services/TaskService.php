@@ -104,4 +104,10 @@ class TaskService
 
         return $task->refresh();
     }
+
+
+    public function unassignUserFromTasks(User $user) : void
+    {
+        Task::where('assignee_id',$user->id)->update(['assignee_id'=> null]);
+    }
 }

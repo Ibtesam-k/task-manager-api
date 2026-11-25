@@ -247,4 +247,23 @@ class ProjectService
         });
             
     }
+
+        public function getUserProjectsIds(User $user): array
+        {
+            return $user->projects()
+                ->orderBy('projects.id')
+                ->pluck('projects.id')
+                ->all();
+        }
+
+        public function getProjectsOwnersMap(array $projectIds = []) : array
+        {
+           return  DB::table('project_user')
+                    ->whereIn('project_id', $projectIds)
+                    ->where('role', ProjectRole::OWNER->value)
+                    ->get(['project_id', 'user_id'])
+                    ->groupBy('project_id')
+                    ->map(fn ($owners) => $owners->pluck('user_id')->toArray())
+                    ->toArray();
+        }
 }
