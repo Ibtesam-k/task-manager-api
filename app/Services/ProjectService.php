@@ -36,40 +36,69 @@ class ProjectService
 
     public function addMember(Project $project, int $userId, User $actor) :void
     {
-        if ($project->users()->where('users.id', $userId)->exists()) {
-            throw new ConflictHttpException(
-                'User is already a member of this project.'
-            );
-        }
-        $project->users()->attach($userId, 
-        [
-            'role'=>ProjectRole::MEMBER->value
-        ]);
+        DB::transaction(function () use ($project, $userId, $actor)
+        {
+            $lockedUsers = User::whereIn('id',[$userId,$actor->id])->orderBy('id')
+            ->lockForUpdate()
+            ->get();
+
+            if ($lockedUsers->count() !== count(array_unique([$userId, $actor->id]))) {
+                throw new NotFoundHttpException('User not found.');
+            }
+
+            $project = Project::whereKey($project->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+            if ($project->users()->where('users.id', $userId)->exists()) {
+                        throw new ConflictHttpException(
+                            'User is already a member of this project.'
+                        );
+                    }
+            $project->users()->attach($userId,
+            [
+                'role'=>ProjectRole::MEMBER->value
+            ]);
+        });
 
         MemberAdded::dispatch($project, $actor, $userId);
-
     }
 
     public function removeMember(Project $project, int $userId,  User $actor): void
     {
-        $member = $project->users()
-            ->withPivot('role')
-            ->find($userId);
+        DB::transaction(function () use($project,$userId,$actor){
+
+            $lockedUsers = User::whereIn('id',[$userId,$actor->id])->orderBy('id')
+            ->lockForUpdate()
+            ->get();
+
+            if ($lockedUsers->count() !== count(array_unique([$userId, $actor->id]))) {
+                throw new NotFoundHttpException('User not found.');
+            }
+
+            $project = Project::whereKey($project->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+            $member = $project->users()
+                            ->withPivot('role')
+                            ->find($userId);
 
 
-        if (!$member) {
-            throw new NotFoundHttpException(
-                'User is not a member of this project.'
-            );
-        }
+            if (!$member) {
+                throw new NotFoundHttpException(
+                    'User is not a member of this project.'
+                );
+            }
 
-        if ($member->pivot->role === ProjectRole::OWNER->value) {
-            throw new ConflictHttpException(
-                'The project owner cannot be removed.'
-            );
-        }
+            if ($member->pivot->role === ProjectRole::OWNER->value) {
+                throw new ConflictHttpException(
+                    'The project owner cannot be removed.'
+                );
+            }
 
-        $project->users()->detach($userId);
+            $project->users()->detach($userId);
+            }) ;
         
         MemberRemoved::dispatch($project, $actor, $userId);
 
@@ -108,7 +137,7 @@ class ProjectService
     public function getUserRole(User $user, Project $project) : ?ProjectRole
     {
         $role = $project->users()->where('users.id',$user->id)->value('project_user.role');
-        return $role ? ProjectRole::from($role) : null; 
+        return $role ? ProjectRole::from($role) : null;
     }
 
     public function isUserMember(int $userId, Project $project): bool
@@ -129,34 +158,55 @@ class ProjectService
      public function updateUserRole(Project $project,User $actor, User $target, ProjectRole $role) : void
     {
 
-
         if ($target->id === $actor->id) {
             throw new ConflictHttpException(
                 'You cannot change your own project role.'
             );
         }
+        DB::transaction(function () use ($project,$target,$actor,$role) {
 
-        $currentRole = $this->getUserRole($target, $project);
+             $lockedUsers = User::whereIn('id',[$target->id,$actor->id])->orderBy('id')
+            ->lockForUpdate()
+            ->get();
 
-        if($currentRole === null)
-        {
-            throw new NotFoundHttpException(
-                'User is not a member of this project.'
-            ); 
-        }
+            if ($lockedUsers->count() !== count(array_unique([$target->id, $actor->id]))) {
+                throw new NotFoundHttpException('User not found.');
+            }
+            $project = Project::whereKey($project->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
 
-        if($currentRole === $role)
-        {
-            throw new ConflictHttpException(
-                'User already has this role.'
+            $currentRole = $this->getUserRole($target, $project);
+
+            if($currentRole === null)
+            {
+                throw new NotFoundHttpException(
+                    'User is not a member of this project.'
+                );
+            }
+
+            if($currentRole === $role)
+            {
+                throw new ConflictHttpException(
+                    'User already has this role.'
+                );
+            }
+
+            if (
+                $currentRole === ProjectRole::OWNER &&
+                $role === ProjectRole::MEMBER &&
+                !$this->hasOtherOwners($project, $target)
+            ) {
+                throw new ConflictHttpException(
+                    'You cannot demote the last owner of this project.'
+                );
+            }
+
+            $project->users()->updateExistingPivot(
+                $target->id,
+                ['role' => $role->value]
             );
-        }
-
-
-        $project->users()->updateExistingPivot(
-            $target->id,
-            ['role' => $role->value]
-        );    
+            });
         
     }
 
@@ -170,6 +220,11 @@ class ProjectService
     public function leave(User $user, Project $project) : int
     {
       return  DB::transaction(function () use ($project, $user) {
+
+        $user = User::whereKey($user->id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
         $project = Project::whereKey($project->id)
             ->lockForUpdate()
             ->firstOrFail();
