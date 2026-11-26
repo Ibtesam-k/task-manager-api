@@ -28,3 +28,5 @@ Thumbs.db
 /storage/logs/*
 /storage/framework/*
 .env.*
+.env*
+!.env.example
